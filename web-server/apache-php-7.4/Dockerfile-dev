@@ -1,0 +1,40 @@
+FROM apache-php-7.4:latest
+
+LABEL   "project"="web-server-apache-php-7.4-dev" \
+        "description"="Debian based web server with Apache and PHP 7.4." \
+        "vendor.name"="Aeon Digital" \
+        "vendor.site"="aeondigital.com.br" \
+        "author.name"="Rianna Cantarelli" \
+        "author.email"="rianna@aeondigital.com.br"
+
+
+
+
+
+#
+# Define argumentos a serem passados para o momento de build
+ARG DEBIAN_FRONTEND=noninteractive
+
+#
+# Instalação do XDebug do PHP
+# para uso de testes unitários.
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends php7.4-xdebug
+
+#
+# Instalação dos pacotes que permitem a extração da documentação técnica do
+# php, compatível com o 'ReadTheDocs'.
+RUN apt-get install -y python3 python3-pip \
+    && pip install -U sphinx sphinx_rtd_theme sphinxcontrib-phpdomain recommonmark
+
+#
+# Limpa dados temporários do 'apt'
+RUN apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apt
+
+#
+# Copia os arquivos de configuração para este build
+# [Efetua um 'merge' com os arquivos padrões existentes no container]
+COPY ./configuration-files/dev/etc/. /etc/
