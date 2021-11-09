@@ -82,8 +82,6 @@ docker-image-remove-all:
 
 
 
-
-
 #
 # Restaura o Docker da máquina atual para um estado inicial
 # Esta ação excluirá TODOS os seguintes itens:
@@ -95,16 +93,5 @@ docker-image-remove-all:
 # Use esta opção APENAS SE TIVER CERTEZA de que não precisa de
 # nenhuma informação de nenhum dos itens listados acima.
 #
-# Para ter segurança que todos os comandos serão rodados use a 
-# flag '-i' (--ignore-errors) junto ao comando ``make``.
-#
-# > make -i docker-reset
-#
 docker-reset: 
-	@echo "\n\n :: Iniciando Docker Reset"
-	docker stop $(shell docker container ls -q)
-	docker rm -f $(shell docker container ls -a -q)
-	docker volume rm $(shell docker volume ls -q)
-	docker network rm $(shell docker network ls -q)
-	docker image rm $(shell docker image ls -q)
-	@echo "\n\n :: Tarefa finalizada"
+	docker system prune -a

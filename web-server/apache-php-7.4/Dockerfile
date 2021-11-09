@@ -15,66 +15,66 @@ LABEL   "project"="web-server-apache-php-7.4" \
 # Define argumentos a serem passados para o momento de build
 ARG DEBIAN_FRONTEND=noninteractive
 
+#
+# Importa o script de inicialização a ser usado no container.
+ADD start.sh /
+
+
 
 # 
-# Pacotes que serão instalados neste build
+# Comandos que compõe o build
 RUN buildPacks=" \
-    apache2 \
-    php7.4 \
-    php7.4-dom php7.4-mbstring php7.4-bcmath php7.4-gd php7.4-zip \
-    curl git vim \
-    " \
+        apache2 \
+        php7.4 \
+        php7.4-dom php7.4-mbstring php7.4-bcmath php7.4-gd php7.4-zip \
+        curl git vim \
+    " \ 
     && apt-get -y update \
     && apt-get -y install $buildPacks \
     && apt-get -y upgrade \
     && apt-get -y autoremove \
     && apt-get -y clean \
     && rm -r /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apt \
     && a2enmod rewrite \
-    && service apache2 start
+    && chmod +x /start.sh
 
 
 
 #
 # Instalação do Composer
-RUN curl -sS https://getcomposer.org/installer \
-    | php -- --install-dir=/usr/local/bin --filename=composer \
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && ln -s $(composer config --global home) /root/composer
-
-
 
 #
 # Instalação do PHPUnit
 RUN curl -Lo /usr/local/bin/phpunit https://phar.phpunit.de/phpunit-9.phar \
     && chmod +x /usr/local/bin/phpunit
 
+#
+# Redefinindo o .bashrc para acessos '-it'
+RUN > /root/.bashrc \
+    && echo "loadkeys br-abnt2" >> /root/.bashrc \
+    && echo "alias ls='ls --color=auto'" >> /root/.bashrc \
+    && echo "alias ll='ls -la --color=auto'" >> /root/.bashrc \
+    && echo "PS1='\[\e[0;94;49m\]\$ \[\e[0;90;49m\]\u\[\e[0;94;49m\]@docker \[\e[0;90;49m\]\h\[\e[0;94;49m\] in \[\e[0;90;49m\]\w \n\076\[\e[0;37;49m\]\040'" >> /root/.bashrc
+
 
 
 #
 # Variáveis de ambiente
 ENV PATH=$PATH:/root/composer/vendor/bin \
-    COMPOSER_ALLOW_SUPERUSER=1 \
-    TZ=America/Sao_Paulo
-
-
+    COMPOSER_ALLOW_SUPERUSER=1
 
 #
-# Definindo o timezone padrão
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone
-
-
+# Diretório de trabalho padrão
+WORKDIR /var/www/html
 
 #
-# Redefinindo o .bashrc
-RUN > /root/.bashrc \
-    && echo "alias ls='ls --color=auto'" >> /root/.bashrc \
-    && echo "alias ll='ls -la --color=auto'" >> /root/.bashrc \
-    && echo "PS1='\[\e[0;94;49m\]\$ \[\e[0;90;49m\]\u\[\e[0;94;49m\]@docker \[\e[0;90;49m\]\h\[\e[0;94;49m\] in \[\e[0;90;49m\]\w \n\076\[\e[0;37;49m\]\040'" >> /root/.bashrc \
-    && echo "cd /var/www/html" >> /root/.bashrc
-
-
+# Porta que será exposta
+EXPOSE 80
 
 #
-# Inicia o servidor web apache
-CMD ["apachectl", "-D", "FOREGROUND"]
+# Configura o script de inicialização para que ele
+# seja executado sempre que um container iniciar.
+CMD /start.sh
