@@ -35,7 +35,7 @@ build:
 # O container será iniciado desanexado.
 # O container terá o mesmo nome da imagem.
 run:
-	docker run -p 3306:3306 -d --name $(IMAGE_NAME) $(IMAGE_NAME):latest
+	docker run --rm --name $(IMAGE_NAME) $(IMAGE_NAME):latest
 
 #
 # Encerra o processamento do container.
@@ -56,6 +56,7 @@ bash:
 # Retorna o IP da rede usado pelo container
 get-ip:
 	docker inspect $(IMAGE_NAME) | grep -oP -m1 '(?<="IPAddress": ")[^"]*'
+
 
 
 

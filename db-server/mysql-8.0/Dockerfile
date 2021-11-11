@@ -142,7 +142,7 @@ VOLUME /var/lib/mysql
 
 #
 # Portas que serão expostas
-EXPOSE 3306 33060
+EXPOSE 3306
 
 #
 # Configura o comando de inicialização do container.
