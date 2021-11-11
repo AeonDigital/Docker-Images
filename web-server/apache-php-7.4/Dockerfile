@@ -16,8 +16,9 @@ LABEL   "project"="web-server-apache-php-7.4" \
 ARG DEBIAN_FRONTEND=noninteractive
 
 #
-# Importa o script de inicialização a ser usado no container.
-ADD start.sh /
+# Variáveis de ambiente para o build
+ENV PATH=$PATH:/root/composer/vendor/bin \
+    COMPOSER_ALLOW_SUPERUSER=1
 
 
 
@@ -27,19 +28,15 @@ RUN buildPacks=" \
         apache2 \
         php7.4 \
         php7.4-dom php7.4-mbstring php7.4-bcmath php7.4-gd php7.4-zip \
-        curl git vim \
+        curl ca-certificates git vim \
     " \ 
-    && apt-get -y update \
-    && apt-get -y install $buildPacks \
-    && apt-get -y upgrade \
-    && apt-get -y autoremove \
-    && apt-get -y clean \
-    && rm -r /var/lib/apt/lists/* \
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends ${buildPacks} \
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/cache/apt \
-    && a2enmod rewrite \
-    && chmod +x /start.sh
-
-
+    && a2enmod rewrite
 
 #
 # Instalação do Composer
@@ -51,8 +48,15 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN curl -Lo /usr/local/bin/phpunit https://phar.phpunit.de/phpunit-9.phar \
     && chmod +x /usr/local/bin/phpunit
 
+
+
 #
-# Redefinindo o .bashrc para acessos '-it'
+# Ajusta o timezone do container
+RUN ln -snf /usr/share/zoneinfo/${ENV_TIMEZONE} /etc/localtime \
+	&& echo ${ENV_TIMEZONE} > /etc/timezone
+
+#
+# Redefine o .bashrc para acessos '-it'
 RUN > /root/.bashrc \
     && echo "loadkeys br-abnt2" >> /root/.bashrc \
     && echo "alias ls='ls --color=auto'" >> /root/.bashrc \
@@ -62,19 +66,15 @@ RUN > /root/.bashrc \
 
 
 #
-# Variáveis de ambiente
-ENV PATH=$PATH:/root/composer/vendor/bin \
-    COMPOSER_ALLOW_SUPERUSER=1
-
-#
 # Diretório de trabalho padrão
 WORKDIR /var/www/html
 
 #
-# Porta que será exposta
+# Portas que serão expostas
 EXPOSE 80
 
 #
-# Configura o script de inicialização para que ele
-# seja executado sempre que um container iniciar.
-CMD /start.sh
+# Configura o comando de inicialização do container.
+COPY cmd.sh /
+RUN chmod +x /cmd.sh
+CMD ["/cmd.sh"]

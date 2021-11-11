@@ -9,6 +9,7 @@ include ../../.env
 
 
 #
+# Variáveis de controle
 IMAGE_NAME="apache-php-7.4"
 
 PROJECT_VERSION_MAJOR=0
@@ -34,7 +35,7 @@ build:
 # O container será iniciado desanexado.
 # O container terá o mesmo nome da imagem.
 run:
-	docker run -p 8080:80 -d --name $(IMAGE_NAME) $(IMAGE_NAME):latest
+	docker run -d -p 8080:80 --rm --name $(IMAGE_NAME) $(IMAGE_NAME):latest
 
 #
 # Encerra o processamento do container.
@@ -50,6 +51,11 @@ start:
 # Entra no bash do container
 bash:
 	docker exec -it $(IMAGE_NAME) /bin/bash
+
+#
+# Retorna o IP da rede usado pelo container
+get-ip:
+	docker inspect $(IMAGE_NAME) | grep -oP -m1 '(?<="IPAddress": ")[^"]*'
 
 
 
