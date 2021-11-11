@@ -2,7 +2,7 @@
 # Este arquivo e os outros que fazem parte deste build foram
 # coletados do repositório "https://github.com/docker-library/mysql"
 # e adaptados para as necessidades dos projetos Aeon Digital.
-FROM debian:buster-20211011-slim
+FROM debian:stable-20211011-slim
 
 LABEL   "project"="db-server-mysql-8.0" \
         "description"="Debian based database server with MySql 8.0." \
