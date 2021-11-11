@@ -35,7 +35,7 @@ build:
 # O container será iniciado desanexado.
 # O container terá o mesmo nome da imagem.
 run:
-	docker run --rm --name $(IMAGE_NAME) $(IMAGE_NAME):latest
+	docker run -d --rm --name $(IMAGE_NAME) $(IMAGE_NAME):latest
 
 #
 # Encerra o processamento do container.
