@@ -35,6 +35,13 @@ build:
 # O container será iniciado desanexado.
 # O container terá o mesmo nome da imagem.
 run:
+	docker run -d --name $(IMAGE_NAME) $(IMAGE_NAME):latest
+
+#
+# Mesmo que acima, mas excluirá totalmente o container ao ser 
+# desativado. Qualquer 'objeto acessório' como um volume ou rede
+# também serão excluídos totalmente.
+run-rm:
 	docker run -d --rm --name $(IMAGE_NAME) $(IMAGE_NAME):latest
 
 #
