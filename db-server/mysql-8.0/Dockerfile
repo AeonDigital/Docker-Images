@@ -1,7 +1,3 @@
-#
-# Este arquivo e os outros que fazem parte deste build foram
-# coletados do repositório "https://github.com/docker-library/mysql"
-# e adaptados para as necessidades dos projetos Aeon Digital.
 FROM debian:stable-20211011-slim
 
 LABEL   "project"="db-server-mysql-8.0" \
@@ -82,10 +78,9 @@ RUN set -ex; \
 	apt-key list > /dev/null
 
 #
-# the "/var/lib/mysql" stuff here is because the mysql-server postinst doesn't 
-# have an explicit way to disable the mysql_install_db codepath besides having 
-# a database already "configured" (ie, stuff in /var/lib/mysql/mysql) also, we 
-# set debconf keys to make APT a little quieter
+# Prepara o APT para receber a fonte de pacotes que permitem instalar o mysql.
+# Atualiza o APT e instala o 'mysql-community-client' e o 'mysql-community-server-core'
+# na mesma versão que foi definida na variável de ambiente 'MYSQL_VERSION'.
 RUN echo 'deb http://repo.mysql.com/apt/debian/ buster mysql-8.0' > /etc/apt/sources.list.d/mysql.list \
 	&& { \
 		echo mysql-community-server mysql-community-server/data-dir select ''; \
@@ -101,8 +96,6 @@ RUN echo 'deb http://repo.mysql.com/apt/debian/ buster mysql-8.0' > /etc/apt/sou
 	&& rm -rf /var/lib/mysql \
 	&& mkdir -p /var/lib/mysql /var/run/mysqld /var/lib/mysql-files \
 	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld /var/lib/mysql-files \
-	# ensure that /var/run/mysqld (used for socket and lock files) is writable 
-	# regardless of the UID our mysqld instance ends up having at runtime
 	&& chmod 1777 /var/run/mysqld /var/lib/mysql
 
 #
@@ -147,3 +140,8 @@ EXPOSE 3306
 #
 # Configura o comando de inicialização do container.
 CMD ["mysqld"]
+
+#
+# Este arquivo e os outros que fazem parte deste build foram
+# coletados do repositório "https://github.com/docker-library/mysql"
+# e adaptados para as necessidades dos projetos Aeon Digital.
