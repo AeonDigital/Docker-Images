@@ -18,17 +18,19 @@ ARG DEBIAN_FRONTEND=noninteractive
 #
 # Variáveis de ambiente para o build
 ENV PATH=$PATH:/root/composer/vendor/bin \
-    COMPOSER_ALLOW_SUPERUSER=1
+    COMPOSER_ALLOW_SUPERUSER=1 \
+	ENV_TIMEZONE=America/Sao_Paulo
 
 
 
 # 
 # Comandos que compõe o build
 RUN buildPacks=" \
+        curl ca-certificates git vim zip unzip \
         apache2 \
         php7.4 \
-        php7.4-dom php7.4-mbstring php7.4-bcmath php7.4-gd php7.4-zip php7.4-mysql \
-        curl ca-certificates git vim \
+        php7.4-dom php7.4-curl php7.4-tidy php7.4-mbstring php7.4-bcmath \
+        php7.4-gd php7.4-zip php7.4-mysql \
     " \ 
     && apt-get update -y \
     && apt-get install -y --no-install-recommends ${buildPacks} \
@@ -40,6 +42,8 @@ RUN buildPacks=" \
 
 #
 # Instalação do Composer
+# os pacotes 'php7.4-curl'; 'zip'; 'unzip' foram instalados como
+# dependencias opcionais.
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && ln -s $(composer config --global home) /root/composer
 
