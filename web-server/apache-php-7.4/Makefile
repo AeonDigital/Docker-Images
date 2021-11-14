@@ -76,9 +76,11 @@ login:
 #
 # Define a tag da build atual
 tag: login
+	docker tag $(IMAGE_NAME) $(VENDOR_NAME)/$(IMAGE_NAME):latest
 	docker tag $(IMAGE_NAME) $(VENDOR_NAME)/$(PROJECT_NAME)
 
 #
 # Efetua o push da imagem para o Docker Hub
 push: tag
+	docker push $(VENDOR_NAME)/$(IMAGE_NAME):latest
 	docker push $(VENDOR_NAME)/$(PROJECT_NAME)
