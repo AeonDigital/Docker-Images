@@ -44,8 +44,12 @@ RUN buildPacks=" \
 # Instalação do Composer
 # os pacotes 'php7.4-curl'; 'zip'; 'unzip' foram instalados como
 # dependencias opcionais.
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
-    && ln -s $(composer config --global home) /root/composer
+RUN EXPECTED_CHECKSUM="$(php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");')" \
+    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")" \
+    && if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]; then echo "ERROR: Invalid installer checksum" >&2; exit 1; fi \
+    && php composer-setup.php --quiet \
+    && rm composer-setup.php
 
 #
 # Instalação do PHPUnit
@@ -75,7 +79,7 @@ WORKDIR /var/www/html
 
 #
 # Portas que serão expostas
-EXPOSE 80
+EXPOSE 80 443
 
 #
 # Configura o comando de inicialização do container.
