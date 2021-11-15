@@ -22,6 +22,19 @@ ENV GOSU_VERSION=1.12 \
 
 
 #
+# Ajusta o timezone do container
+RUN ln -snf /usr/share/zoneinfo/${ENV_TIMEZONE} /etc/localtime \
+	&& echo ${ENV_TIMEZONE} > /etc/timezone
+
+#
+# Redefine o .bashrc para acessos '-it'
+RUN > /root/.bashrc \
+    && echo "alias ls='ls --color=auto'" >> /root/.bashrc \
+    && echo "alias ll='ls -la --color=auto'" >> /root/.bashrc \
+    && echo "PS1='\[\e[0;94;49m\]\$ \[\e[0;90;49m\]\u\[\e[0;94;49m\]@docker \[\e[0;90;49m\]\h\[\e[0;94;49m\] in \[\e[0;90;49m\]\w \n\076\[\e[0;37;49m\]\040'" >> /root/.bashrc
+
+
+#
 # Em primeiro lugar, adiciona um grupo 'mysql' e após, um usuário 'mysql' 
 # para ter certeza que os respectivos IDs estarão assinados consistentemente.
 # 
@@ -30,8 +43,7 @@ ENV GOSU_VERSION=1.12 \
 RUN groupadd -r mysql \
 	&& useradd -r -g mysql mysql \
 	&& apt-get update \
-	&& apt-get install -y --no-install-recommends gnupg dirmngr \
-	&& rm -rf /var/lib/apt/lists/*
+	&& apt-get install -y --no-install-recommends gnupg dirmngr
 
 # 
 # Adiciona o projeto 'gosu' para facilitar o uso de ações
@@ -39,9 +51,7 @@ RUN groupadd -r mysql \
 # https://github.com/tianon/gosu/releases
 RUN set -eux; \
 	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
 	apt-get install -y --no-install-recommends ca-certificates wget; \
-	rm -rf /var/lib/apt/lists/*; \
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
 	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
 	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
@@ -60,9 +70,7 @@ RUN set -eux; \
 #
 # Instala outros pacotes necessários 
 RUN mkdir /docker-entrypoint-initdb.d \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends pwgen openssl perl xz-utils \
-	&& rm -rf /var/lib/apt/lists/*
+	&& apt-get install -y --no-install-recommends pwgen openssl perl xz-utils
 
 #
 # Verificação 
@@ -88,15 +96,24 @@ RUN echo 'deb http://repo.mysql.com/apt/debian/ buster mysql-8.0' > /etc/apt/sou
 		echo mysql-community-server mysql-community-server/re-root-pass password ''; \
 		echo mysql-community-server mysql-community-server/remove-test-db select false; \
 	} | debconf-set-selections \
-	&& apt-get update \
 	&& apt-get install -y \
 		mysql-community-client="${MYSQL_VERSION}" \
 		mysql-community-server-core="${MYSQL_VERSION}" \
-	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -rf /var/lib/mysql \
 	&& mkdir -p /var/lib/mysql /var/run/mysqld /var/lib/mysql-files \
 	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld /var/lib/mysql-files \
 	&& chmod 1777 /var/run/mysqld /var/lib/mysql
+
+#
+# Limpa dados temporários do 'apt'
+RUN apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apt
+
+
+
+
 
 #
 # Copia as configurações padrões para os containers
@@ -104,21 +121,6 @@ RUN echo 'deb http://repo.mysql.com/apt/debian/ buster mysql-8.0' > /etc/apt/sou
 COPY config/ /etc/mysql/
 RUN chmod 644 /etc/mysql/my.cnf \
 	&& chmod 644 /etc/mysql/conf.d/docker.cnf
-
-
-
-#
-# Ajusta o timezone do container
-RUN ln -snf /usr/share/zoneinfo/${ENV_TIMEZONE} /etc/localtime \
-	&& echo ${ENV_TIMEZONE} > /etc/timezone
-
-#
-# Redefine o .bashrc para acessos '-it'
-RUN > /root/.bashrc \
-    && echo "loadkeys br-abnt2" >> /root/.bashrc \
-    && echo "alias ls='ls --color=auto'" >> /root/.bashrc \
-    && echo "alias ll='ls -la --color=auto'" >> /root/.bashrc \
-    && echo "PS1='\[\e[0;94;49m\]\$ \[\e[0;90;49m\]\u\[\e[0;94;49m\]@docker \[\e[0;90;49m\]\h\[\e[0;94;49m\] in \[\e[0;90;49m\]\w \n\076\[\e[0;37;49m\]\040'" >> /root/.bashrc
 
 
 
