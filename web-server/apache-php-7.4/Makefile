@@ -62,7 +62,7 @@ bash:
 #
 # Retorna o IP da rede usado pelo container
 get-ip:
-	docker inspect ${IMAGE_NAME} | grep -oP -m1 '(?<="IPAddress": ")[^"]*'
+	docker inspect ${IMAGE_NAME} | grep -oP -m1 '(?<="IPAddress": ")[\S]+"'
 
 
 
