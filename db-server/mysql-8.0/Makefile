@@ -3,6 +3,7 @@
 # Rianna Cantarelli <rianna@aeondigital.com.br>
 #
 include ../../.env
+.SILENT:
 
 
 

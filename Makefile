@@ -3,6 +3,7 @@
 # Rianna Cantarelli <rianna@aeondigital.com.br>
 #
 include .env
+.SILENT:
 
 
 
@@ -14,19 +15,19 @@ include .env
 #
 # Encerra o processamento de todos os containers
 docker-container-stop-all:
-	@echo " - Encerrando o processamento de todos os containers ..."
+	echo " - Encerrando o processamento de todos os containers ..."
 	docker stop $(shell docker container ls -q)
 
 #
 # Remove todos os containers inativos
 docker-container-remove-inactives:
-	@echo " - Removendo todos os containers inativos ..."
+	echo " - Removendo todos os containers inativos ..."
 	docker container prune
 
 #
 # Remove todos os containers 
 docker-container-remove-all:
-	@echo " - Removendo todos os containers ..."
+	echo " - Removendo todos os containers ..."
 	docker rm -f $(shell docker container ls -a -q)
 
 
@@ -37,13 +38,13 @@ docker-container-remove-all:
 #
 # Remove todos os volumes inativos
 docker-volume-remove-inactives:
-	@echo " - Removendo todos os volumes inativos ..."
+	echo " - Removendo todos os volumes inativos ..."
 	docker volume prune
 
 #
 # Remove todos os volumes
 docker-volume-remove-all:
-	@echo " - Removendo todos os volumes ..."
+	echo " - Removendo todos os volumes ..."
 	docker volume rm $(shell docker volume ls -a -q)
 
 
@@ -54,13 +55,13 @@ docker-volume-remove-all:
 #
 # Remove todas as redes inativas
 docker-network-remove-inactives:
-	@echo " - Removendo todas as redes inativas ..."
+	echo " - Removendo todas as redes inativas ..."
 	docker network prune
 
 #
 # Remove todas as redes
 docker-network-remove-all:
-	@echo " - Removendo todas as redes ..."
+	echo " - Removendo todas as redes ..."
 	docker network rm $(shell docker network ls -a -q)
 
 
@@ -71,13 +72,13 @@ docker-network-remove-all:
 #
 # Remove todas as redes inativas
 docker-image-remove-inactives:
-	@echo " - Removendo todas as imagens inativas ..."
+	echo " - Removendo todas as imagens inativas ..."
 	docker image prune
 
 #
 # Remove todas as redes
 docker-image-remove-all:
-	@echo " - Removendo todas as imagens ..."
+	echo " - Removendo todas as imagens ..."
 	docker image rm $(shell docker image ls -a -q)
 
 
