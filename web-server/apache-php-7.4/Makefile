@@ -12,13 +12,12 @@ include ../../.env
 #
 # Variáveis de controle
 IMAGE_NAME="apache-php-7.4"
+HAS_DEV=1
 
 PROJECT_VERSION_MAJOR=0
 PROJECT_VERSION_MINOR=9
 PROJECT_VERSION_HASH=$(shell git log -1 --format=%h)
 PROJECT_VERSION_TAG=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_HASH}
-
-PROJECT_NAME=${IMAGE_NAME}:${PROJECT_VERSION_TAG}
 
 
 
@@ -29,7 +28,7 @@ PROJECT_NAME=${IMAGE_NAME}:${PROJECT_VERSION_TAG}
 # A nova imagem receberá uma tag 'latest' ao mesmo tempo que receberá
 # uma tag com a versão exata sendo usada no momento.
 build:
-	docker build -t ${IMAGE_NAME}:latest -t ${PROJECT_NAME} .
+	docker build -t ${IMAGE_NAME}:latest .
 
 #
 # Compila a imagem conforme instruções descritas no ``Dockerfile-dev`` 
@@ -41,15 +40,27 @@ build-dev:
 # Executa um container com a imagem (da versão latest) deste projeto.
 # O container será iniciado desanexado.
 # O container terá o mesmo nome da imagem.
+#
+# Use o parametro 'tag' para indicar qual versão exatamente você deseja rodar
 run:
-	docker run -d -p 8080:80 --name ${IMAGE_NAME} ${IMAGE_NAME}:latest
+	if [ -z "${tag}" ]; then \
+		docker run -d -p 8080:80 --name ${IMAGE_NAME} ${IMAGE_NAME}:latest; \
+	else \
+		docker run -d -p 8080:80 --name ${IMAGE_NAME} ${IMAGE_NAME}:${tag}; \
+	fi;
 
 #
 # Mesmo que acima, mas excluirá totalmente o container ao ser 
 # desativado. Qualquer 'objeto acessório' como um volume ou rede
 # também serão excluídos totalmente.
+#
+# Use o parametro 'tag' para indicar qual versão exatamente você deseja rodar
 run-rm:
-	docker run -d -p 8080:80 --rm --name ${IMAGE_NAME} ${IMAGE_NAME}:latest
+	if [ -z "${tag}" ]; then \
+		docker run -d -p 8080:80 --rm --name ${IMAGE_NAME} ${IMAGE_NAME}:latest; \
+	else \
+		docker run -d -p 8080:80 --rm --name ${IMAGE_NAME} ${IMAGE_NAME}:${tag}; \
+	fi;
 
 #
 # Encerra o processamento do container.
@@ -83,13 +94,17 @@ login:
 #
 # Define a tag da build atual
 tag: login
-	docker tag ${IMAGE_NAME} ${VENDOR_NAME}/${IMAGE_NAME}:dev
-	docker tag ${IMAGE_NAME} ${VENDOR_NAME}/${IMAGE_NAME}:latest
-	docker tag ${IMAGE_NAME} ${VENDOR_NAME}/${PROJECT_NAME}	
+	if [ "${HAS_DEV}" = "1" ]; then \
+		docker tag ${IMAGE_NAME}:dev ${VENDOR_NAME}/${IMAGE_NAME}:dev; \
+	fi;
+	docker tag ${IMAGE_NAME}:latest ${VENDOR_NAME}/${IMAGE_NAME}:latest
+	docker tag ${IMAGE_NAME}:latest ${VENDOR_NAME}/${IMAGE_NAME}:${PROJECT_VERSION_TAG}
 
 #
 # Efetua o push da imagem para o Docker Hub
 push: tag
-	docker push ${VENDOR_NAME}/${IMAGE_NAME}:dev
+	if [ "${HAS_DEV}" = "1" ]; then \
+		docker push ${VENDOR_NAME}/${IMAGE_NAME}:dev; \
+	fi;
 	docker push ${VENDOR_NAME}/${IMAGE_NAME}:latest
-	docker push ${VENDOR_NAME}/${PROJECT_NAME}	
+	docker push ${VENDOR_NAME}/${IMAGE_NAME}:${PROJECT_VERSION_TAG}
