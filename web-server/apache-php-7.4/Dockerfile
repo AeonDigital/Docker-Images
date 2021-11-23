@@ -57,12 +57,6 @@ RUN apt-get install -y --no-install-recommends php7.4-curl zip unzip \
     && ln -s $(composer config --global home) /root/composer
 
 #
-# Instalação do XDebug do PHP
-# para uso de testes unitários.
-RUN apt-get install -y --no-install-recommends php7.4-xdebug \
-    && echo "xdebug.mode=coverage" >> /etc/php/7.4/cli/conf.d/20-xdebug.ini
-
-#
 # Limpa dados temporários do 'apt'
 RUN apt-get autoremove -y \
     && apt-get clean -y \

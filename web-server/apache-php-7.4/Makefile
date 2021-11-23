@@ -32,6 +32,12 @@ build:
 	docker build -t ${IMAGE_NAME}:latest -t ${PROJECT_NAME} .
 
 #
+# Compila a imagem conforme instruções descritas no ``Dockerfile-dev`` 
+# A nova imagem receberá uma tag 'dev'.
+build-dev:
+	docker build -t ${IMAGE_NAME}:dev -f Dockerfile-dev .
+
+#
 # Executa um container com a imagem (da versão latest) deste projeto.
 # O container será iniciado desanexado.
 # O container terá o mesmo nome da imagem.
@@ -77,11 +83,13 @@ login:
 #
 # Define a tag da build atual
 tag: login
+	docker tag ${IMAGE_NAME} ${VENDOR_NAME}/${IMAGE_NAME}:dev
 	docker tag ${IMAGE_NAME} ${VENDOR_NAME}/${IMAGE_NAME}:latest
-	docker tag ${IMAGE_NAME} ${VENDOR_NAME}/${PROJECT_NAME}
+	docker tag ${IMAGE_NAME} ${VENDOR_NAME}/${PROJECT_NAME}	
 
 #
 # Efetua o push da imagem para o Docker Hub
 push: tag
+	docker push ${VENDOR_NAME}/${IMAGE_NAME}:dev
 	docker push ${VENDOR_NAME}/${IMAGE_NAME}:latest
-	docker push ${VENDOR_NAME}/${PROJECT_NAME}
+	docker push ${VENDOR_NAME}/${PROJECT_NAME}	
