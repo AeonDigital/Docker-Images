@@ -128,7 +128,8 @@ RUN chmod 644 /etc/mysql/my.cnf \
 #
 # Configuração do entrypoint padrão para os containers
 COPY entrypoint.sh /usr/local/bin/
-RUN ln -s usr/local/bin/entrypoint.sh /entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh \
+	&& ln -s usr/local/bin/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
 #
