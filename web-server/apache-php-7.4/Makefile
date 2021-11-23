@@ -99,17 +99,13 @@ login:
 #
 # Define a tag da build atual
 tag: login
-	if [ "${HAS_DEV}" = "1" ]; then \
-		docker tag ${IMAGE_NAME}:dev ${VENDOR_NAME}/${IMAGE_NAME}:dev; \
-	fi;
+	docker tag ${IMAGE_NAME}:dev ${VENDOR_NAME}/${IMAGE_NAME}:dev
 	docker tag ${IMAGE_NAME}:latest ${VENDOR_NAME}/${IMAGE_NAME}:latest
 	docker tag ${IMAGE_NAME}:latest ${VENDOR_NAME}/${IMAGE_NAME}:${PROJECT_VERSION_TAG}
 
 #
 # Efetua o push da imagem para o Docker Hub
 push: tag
-	if [ "${HAS_DEV}" = "1" ]; then \
-		docker push ${VENDOR_NAME}/${IMAGE_NAME}:dev; \
-	fi;
+	docker push ${VENDOR_NAME}/${IMAGE_NAME}:dev
 	docker push ${VENDOR_NAME}/${IMAGE_NAME}:latest
 	docker push ${VENDOR_NAME}/${IMAGE_NAME}:${PROJECT_VERSION_TAG}
