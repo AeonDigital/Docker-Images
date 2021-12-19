@@ -149,3 +149,8 @@ CMD ["mysqld"]
 # Este arquivo e os outros que fazem parte deste build foram
 # coletados do repositório "https://github.com/docker-library/mysql"
 # e adaptados para as necessidades dos projetos Aeon Digital.
+
+#
+# O comando abaixo pode ser usado em seu docker-compose.
+# Ele é opcional e está aqui registrado para eventualidade de uso futuro.
+# command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
