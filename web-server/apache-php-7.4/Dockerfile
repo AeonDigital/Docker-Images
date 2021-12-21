@@ -63,6 +63,11 @@ RUN apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/cache/apt
 
+#
+# Copia os arquivos de configuração para este build
+# [Efetua um 'merge' com os arquivos padrões existentes no container]
+COPY ./configuration-files/prd/etc/. /etc/
+
 
 
 
