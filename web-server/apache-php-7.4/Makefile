@@ -98,7 +98,11 @@ login:
 #
 # Define a tag da build atual
 tag: login
-	docker tag ${IMAGE_NAME}:dev ${VENDOR_NAME}/${IMAGE_NAME}:dev
+	if [ "${HAS_DEV}" = "1" ]; then \
+		docker tag ${IMAGE_NAME}:dev ${VENDOR_NAME}/${IMAGE_NAME}:dev; \
+	else \
+		docker tag ${IMAGE_NAME}:latest ${VENDOR_NAME}/${IMAGE_NAME}:dev; \
+	fi;
 	docker tag ${IMAGE_NAME}:latest ${VENDOR_NAME}/${IMAGE_NAME}:latest
 	docker tag ${IMAGE_NAME}:latest ${VENDOR_NAME}/${IMAGE_NAME}:${PROJECT_VERSION_TAG}
 
