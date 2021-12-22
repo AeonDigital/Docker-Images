@@ -25,8 +25,7 @@ PROJECT_VERSION_TAG=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_
 
 #
 # Compila a imagem conforme instruções descritas no ``Dockerfile`` 
-# A nova imagem receberá uma tag 'latest' ao mesmo tempo que receberá
-# uma tag com a versão exata sendo usada no momento.
+# A nova imagem receberá uma tag 'latest'.
 build:
 	docker build -t ${IMAGE_NAME}:latest .
 
