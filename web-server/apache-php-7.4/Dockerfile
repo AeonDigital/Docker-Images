@@ -66,11 +66,6 @@ RUN apt-get autoremove -y \
 #
 # Copia os arquivos de configuração para este build
 # [Efetua um 'merge' com os arquivos padrões existentes no container]
-# [v] 1 - Ver se o merge ocorre corretamente
-# [v] 2 - Ver se carregando o .env no docker run ou docker-compose realmente substitui as variáveis inicialmente definidas.
-# 3 - Ver se usando o docker-compose com o 'env_file' + um volume que exponha o .env a coisa toda roda direito.
-# 4 - Ver se usando o .env incluso diretamente junto com o envvars a coisa roda direito e, se, é possível
-#     expor este arquivo usando um volume e então verificar se as alterações nele rodam direito.
 COPY ./configuration-files/prd/etc/. /etc/
 
 
