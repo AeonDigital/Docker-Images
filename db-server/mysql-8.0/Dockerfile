@@ -35,9 +35,9 @@ RUN > /root/.bashrc \
 
 
 #
-# Em primeiro lugar, adiciona um grupo 'mysql' e após, um usuário 'mysql' 
+# Em primeiro lugar, adiciona um grupo 'mysql' e após, um usuário 'mysql'
 # para ter certeza que os respectivos IDs estarão assinados consistentemente.
-# 
+#
 # Após, atualiza o apt-get e instala pacotes que serão úteis para
 # o restante da build
 RUN groupadd -r mysql \
@@ -45,7 +45,7 @@ RUN groupadd -r mysql \
 	&& apt-get update \
 	&& apt-get install -y --no-install-recommends gnupg dirmngr
 
-# 
+#
 # Adiciona o projeto 'gosu' para facilitar o uso de ações
 # que exijam privilégios elevados ('su' ou 'sudo')
 # https://github.com/tianon/gosu/releases
@@ -68,13 +68,13 @@ RUN set -eux; \
 	gosu nobody true
 
 #
-# Instala outros pacotes necessários 
+# Instala outros pacotes necessários
 RUN mkdir /docker-entrypoint-initdb.d \
 	&& apt-get install -y --no-install-recommends pwgen openssl perl xz-utils
 
 #
-# Verificação 
-# gpg: key 5072E1F5: public key 
+# Verificação
+# gpg: key 5072E1F5: public key
 # "MySQL Release Engineering <mysql-build@oss.oracle.com>" imported
 RUN set -ex; \
 	key='A4A9406876FCBD3C456770C88C718D3B5072E1F5'; \

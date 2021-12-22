@@ -24,13 +24,13 @@ PROJECT_VERSION_TAG=${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_
 
 
 #
-# Compila a imagem conforme instruções descritas no ``Dockerfile`` 
+# Compila a imagem conforme instruções descritas no ``Dockerfile``
 # A nova imagem receberá uma tag 'latest'.
 build:
 	docker build -t ${IMAGE_NAME}:latest .
 
 #
-# Compila a imagem conforme instruções descritas no ``Dockerfile-dev`` 
+# Compila a imagem conforme instruções descritas no ``Dockerfile-dev``
 # A nova imagem receberá uma tag 'dev'.
 # Se esta imagem não possui uma versão 'dev', apenas cria a tag para a mesma.
 build-dev:
@@ -54,7 +54,7 @@ run:
 	fi;
 
 #
-# Mesmo que acima, mas excluirá totalmente o container ao ser 
+# Mesmo que acima, mas excluirá totalmente o container ao ser
 # desativado. Qualquer 'objeto acessório' como um volume ou rede
 # também serão excluídos totalmente.
 #

@@ -6,7 +6,7 @@
 # Comentários e as configurações para permitir rodar inúmeras
 # instâncias foram removidas.
 # Uma versão original do mesmo foi mantida no repositório deste
-# projeto 
+# projeto
 
 unset HOME
 
