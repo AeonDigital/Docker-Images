@@ -121,10 +121,7 @@ RUN apt-get autoremove -y \
 # [Efetua um 'merge' com os arquivos padrões existentes no container]
 COPY ./configuration-files/prd/etc/. /etc/
 # Ajusta permissões de acessos para os arquivos sensíveis.
-RUN chmod 644 /etc/mysql/conf.d/docker.cnf \
-	&& chmod 644 /etc/mysql/conf.d/mysql.cnf \
-	&& chmod 644 /etc/mysql/my.cnf \
-	&& chmod 644 /etc/mysql/my.cnf.fallback
+RUN chmod 644 /etc/mysql/my.cnf
 
 
 
