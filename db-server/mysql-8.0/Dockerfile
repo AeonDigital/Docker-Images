@@ -13,9 +13,9 @@ LABEL   "project"="db-server-mysql-8.0" \
 
 #
 # Variáveis de ambiente para o build
-ENV GOSU_VERSION=1.12 \
+ENV GOSU_VERSION=1.14 \
 	MYSQL_MAJOR=8.0 \
-	MYSQL_VERSION=8.0.27-1debian10 \
+	MYSQL_VERSION=8.0.28-1debian10 \
 	MYSQL_ROOT_PASSWORD=root \
 	ENV_TIMEZONE=America/Sao_Paulo
 
@@ -74,10 +74,10 @@ RUN mkdir /docker-entrypoint-initdb.d \
 
 #
 # Verificação
-# gpg: key 5072E1F5: public key
+# gpg: key 3A79BD29: public key
 # "MySQL Release Engineering <mysql-build@oss.oracle.com>" imported
 RUN set -ex; \
-	key='A4A9406876FCBD3C456770C88C718D3B5072E1F5'; \
+	key='859BE8D7C586F538430B19C2467B942D3A79BD29'; \
 	export GNUPGHOME="$(mktemp -d)"; \
 	gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
 	gpg --batch --export "$key" > /etc/apt/trusted.gpg.d/mysql.gpg; \
@@ -101,9 +101,10 @@ RUN echo 'deb http://repo.mysql.com/apt/debian/ buster mysql-8.0' > /etc/apt/sou
 		mysql-community-client="${MYSQL_VERSION}" \
 		mysql-community-server-core="${MYSQL_VERSION}" \
 	&& rm -rf /var/lib/mysql \
-	&& mkdir -p /var/lib/mysql /var/run/mysqld /var/lib/mysql-files \
-	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld /var/lib/mysql-files \
-	&& chmod 1777 /var/run/mysqld /var/lib/mysql
+	&& mkdir -p /var/lib/mysql /var/run/mysqld \
+	&& chown -R mysql:mysql /var/lib/mysql /var/run/mysqld \
+	&& chmod 1777 /var/lib/mysql /var/run/mysqld \
+	&& chmod 777 /dev/stderr
 
 #
 # Limpa dados temporários do 'apt'
