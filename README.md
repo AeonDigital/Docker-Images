@@ -1,8 +1,11 @@
-  Docker-Images
-=================
+Docker-Images
+==============
 
-> [Aeon Digital](http://aeondigital.com.br)
+> [Aeon Digital](http://www.aeondigital.com.br)
+>
 > rianna@aeondigital.com.br
+
+&nbsp;
 
 Imagens para serem usadas com os projetos AeonDigital.
 
@@ -11,7 +14,7 @@ Imagens para serem usadas com os projetos AeonDigital.
 &nbsp;
 
 
-_______________________________________________________________________________
+________________________________________________________________________________________________________________________
 
 ## Licença
 

@@ -30,12 +30,12 @@ build:
 	docker build -t ${IMAGE_NAME}:latest .
 
 #
-# Compila a imagem conforme instruções descritas no ``Dockerfile-dev``
+# Compila a imagem conforme instruções descritas no ``Dockerfile.dev``
 # A nova imagem receberá uma tag 'dev'.
 # Se esta imagem não possui uma versão 'dev', apenas cria a tag para a mesma.
 build-dev:
 	if [ "${HAS_DEV}" = "1" ]; then \
-		docker build -t ${IMAGE_NAME}:dev -f Dockerfile-dev .; \
+		docker build -t ${IMAGE_NAME}:dev -f Dockerfile.dev .; \
 	else \
 		docker tag ${IMAGE_NAME}:latest ${IMAGE_NAME}:dev; \
 	fi;

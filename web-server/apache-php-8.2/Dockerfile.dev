@@ -1,0 +1,53 @@
+FROM apache-php-8.2:latest
+
+LABEL   "project"="web-server-apache-php-8.2-dev" \
+        "description"="Debian based web server with Apache and PHP 8.2." \
+        "vendor.name"="Aeon Digital" \
+        "vendor.site"="aeondigital.com.br" \
+        "author.name"="Rianna Cantarelli" \
+        "author.email"="rianna@aeondigital.com.br"
+
+
+
+
+
+#
+# Define argumentos a serem passados para o momento de build
+ARG DEBIAN_FRONTEND=noninteractive
+
+#
+# Instalação do XDebug do PHP @@ Não disponível ainda para a versão 8.2 do PHP
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends php-xdebug
+
+#
+# Instalação dos pacotes que permitem a extração da documentação técnica do
+# php, compatível com o 'ReadTheDocs'.
+RUN apt-get update -y \
+    && apt-get install -y python3 python3-pip \
+    && pip install -U sphinx sphinx_rtd_theme sphinxcontrib-phpdomain recommonmark
+
+#
+# Limpa dados temporários do 'apt'
+RUN apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apt
+
+#
+# Copia os arquivos de configuração para este build
+# [Efetua um 'merge' com os arquivos padrões existentes no container]
+COPY ./configuration-files/dev/etc/. /etc/
+
+#
+# Redefine a senha do usuário "root" para permitir que outros usuários
+# do mesmo grupo executem ações root sem que seja necessário o prompt
+# da mesma.
+# Adiciona um grupo de usuário e um usuário para uso dev dos containers.
+RUN usermod --password "" root \
+    && groupadd dev -g 1000 \
+    && useradd dev -u 1000 -g dev -G root --create-home --no-log-init
+
+#
+# Define o usuário 'dev' como o ativo para quando o container inicia.
+USER dev

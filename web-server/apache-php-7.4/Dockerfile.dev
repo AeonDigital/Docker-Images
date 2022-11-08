@@ -38,3 +38,16 @@ RUN apt-get autoremove -y \
 # Copia os arquivos de configuração para este build
 # [Efetua um 'merge' com os arquivos padrões existentes no container]
 COPY ./configuration-files/dev/etc/. /etc/
+
+#
+# Redefine a senha do usuário "root" para permitir que outros usuários
+# do mesmo grupo executem ações root sem que seja necessário o prompt
+# da mesma.
+# Adiciona um grupo de usuário e um usuário para uso dev dos containers.
+RUN usermod --password "" root \
+    && groupadd dev -g 1000 \
+    && useradd dev -u 1000 -g dev -G root --create-home --no-log-init
+
+#
+# Define o usuário 'dev' como o ativo para quando o container inicia.
+USER dev

@@ -31,11 +31,12 @@ RUN ln -snf /usr/share/zoneinfo/${ENV_TIMEZONE} /etc/localtime \
 #
 # Redefine o .bashrc para acessos '-it'
 RUN > /root/.bashrc \
-    && echo "alias ls='ls --color=auto'" >> /root/.bashrc \
-    && echo "alias ll='ls -la --color=auto'" >> /root/.bashrc \
-    && echo "PS1='\[\e[0;94;49m\]\$ \[\e[0;90;49m\]\u\[\e[0;94;49m\]@docker \[\e[0;90;49m\]\h\[\e[0;94;49m\] in \[\e[0;90;49m\]\w \n\076\[\e[0;37;49m\]\040'" >> /root/.bashrc
-
-
+    && echo "[[ \$- != *i* ]] && return" >> /root/.bashrc \
+    && echo "alias ls='ls --color=auto --group-directories-first --human-readable'" >> /root/.bashrc \
+    && echo "PS1='\[\e[0;94;49m\]\$ \[\e[0;90;49m\]\u\[\e[0;94;49m\]@docker \[\e[0;90;49m\]\h\[\e[0;94;49m\] in \[\e[0;90;49m\]\w \n\076\[\e[0;37;49m\]\040'" >> /root/.bashrc \
+    && echo "LS_COLORS='tw=1;20;49;35:*.config=1;20;49;36:no=0:fi=0:mi=1;20;49;36:or=1;20;49;36:bd=0:ow=1;20;49;34:di=1;20;49;94:do=0:cd=0:pi=0:*.conf=1;20;49;36:sg=1;2;49;37:ln=1;20;49;36:so=0:st=1;2;49;95:su=1;2;49;37:ex=1;2;49;37'" >> /root/.bashrc \
+    && cp /root/.bashrc /etc/skel/.bashrc \
+    && rm /etc/skel/.bash_logout
 
 #
 # Instala e configura os pacotes principais da build
@@ -53,7 +54,7 @@ RUN buildPacks=" \
 
 #
 # Instalação do Composer
-# os pacotes 'php7.4-curl'; 'zip'; 'unzip' foram instalados como dependencias.
+# os pacotes 'php7.4-curl'; 'zip'; 'unzip' são instalados como dependencias.
 RUN apt-get install -y --no-install-recommends php7.4-curl zip unzip \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && ln -s $(composer config --global home) /root/composer
@@ -86,4 +87,4 @@ EXPOSE 80 443
 # Configura o comando de inicialização do container.
 COPY cmd.sh /
 RUN chmod +x /cmd.sh
-CMD ["/cmd.sh"]
+CMD [ "/cmd.sh" ]
