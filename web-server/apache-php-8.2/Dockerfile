@@ -103,7 +103,10 @@ RUN apt autoremove -y \
 #
 # Copia os arquivos de configuração para este build
 # [Efetua um 'merge' com os arquivos padrões existentes no container]
+# Em seguida, define as permissões de arquivos que necessitam das mesmas
+# para funcionar adequadamente
 COPY ./configuration-files/prd/etc/. /etc/
+RUN [ -f "/etc/mysql/my.cnf" ] && chmod 600 /etc/mysql/my.cnf
 
 
 
