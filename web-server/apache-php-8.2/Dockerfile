@@ -38,7 +38,13 @@ RUN > /root/.bashrc \
     && cp /root/.bashrc /etc/skel/.bashrc \
     && rm /etc/skel/.bash_logout
 
-
+#
+# Componentes de uso geral para a imagem
+RUN buildPacks=" \
+        curl ca-certificates git vim iputils-ping default-mysql-client \
+    " \
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends ${buildPacks}
 
 #
 # Inicia preparos para a instalação do php 8.2
@@ -49,20 +55,18 @@ RUN > /root/.bashrc \
 # Quando o for, e estiver entre os pacotes oficiais fornecidos para distro Debian esta parte abaixo
 # poderá ser revista e possivelmente totalmente removida.
 RUN dpkg -l | grep php | tee packages.txt
-RUN apt update -y \
-    && apt install -y \
-        apt-transport-https \
-        lsb-release \
-        ca-certificates \
-        wget
-
+RUN buildPacks=" \
+        apt-transport-https lsb-release wget \
+    " \
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends ${buildPacks}
 RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 RUN sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
 
-
-
 #
-# Instala e configura os pacotes principais da build
+# Instalação do servidor web Apache e PHP 8.2
+# - Instala módulos extras.
+# - Ativa recursos
 #
 # @REVIEW
 # https://php.watch/articles/install-php82-ubuntu-debian
@@ -72,18 +76,14 @@ RUN sh -c 'echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /
 # Adicionado "php8.2-intl" para internacionalização
 # Adicionado "php8.2-curl" para a lista de módulos fixos e não mais como uma dependencia do composer
 RUN buildPacks=" \
-        curl ca-certificates git vim \
-        apache2 libapache2-mod-php8.2 \
-        php8.2 php8.2-cli \
+        apache2 php8.2 \
+        libapache2-mod-php8.2 php8.2-cli \
         php8.2-dom php8.2-tidy php8.2-mbstring php8.2-bcmath \
         php8.2-gd php8.2-zip php8.2-mysql php8.2-intl php8.2-curl \
-        default-mysql-client \
-        iputils-ping \
     " \
-    && apt update -y \
-    && apt install -y ${buildPacks} \
-    && a2enmod rewrite \
-    && apt purge php8.1*
+    && apt-get update -y \
+    && apt-get install -y --no-install-recommends ${buildPacks} \
+    && a2enmod rewrite
 
 #
 # Instalação do Composer
@@ -93,9 +93,8 @@ RUN apt-get install -y --no-install-recommends zip unzip \
     && ln -s $(composer config --global home) /root/composer
 
 #
-# Limpa dados temporários do 'apt'
-RUN apt autoremove -y \
-    && apt-get autoremove -y \
+# Limpa dados temporários do 'apt-get'
+RUN apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/cache/apt
